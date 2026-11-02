@@ -1,0 +1,36 @@
+; Annonces automatiques Astral BaseWars (ULX). Remplace les annonces ULX d'origine, en anglais (2026-11-02).
+; Une annonce avec "time_on_screen" s'affiche au centre de l'écran ; sans, elle s'affiche dans le chat.
+; "time" : intervalle en secondes entre deux affichages.
+; Les annonces d'un même groupe s'affichent l'une après l'autre.
+
+"astuces"
+{
+	{
+		"text" "[Astral] Vise ta machine et appuie sur Maj + E pour la gérer et l'améliorer."
+		"red" "110"
+		"green" "205"
+		"blue" "255"
+		"time" "420"
+	}
+	{
+		"text" "[Astral] F3 : quêtes du jour, recherche, marché entre joueurs et factions."
+		"red" "110"
+		"green" "205"
+		"blue" "255"
+		"time" "420"
+	}
+	{
+		"text" "[Astral] Un générateur à proximité alimente tes imprimantes : sans énergie, elles ne produisent rien."
+		"red" "110"
+		"green" "205"
+		"blue" "255"
+		"time" "420"
+	}
+	{
+		"text" "[Astral] Respecte les règles du serveur : Échap → Règles du serveur."
+		"red" "255"
+		"green" "200"
+		"blue" "90"
+		"time" "420"
+	}
+}

@@ -1,0 +1,14 @@
+{
+  "name": "astral-panel",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Panel local Astral BaseWars : remplace le panel YorkHost (console, alimentation, fichiers, configuration, sauvegardes, économie, journaux).",
+  "type": "module",
+  "main": "server.mjs",
+  "scripts": {
+    "start": "node server.mjs"
+  },
+  "dependencies": {
+    "mysql2": "3.11.0"
+  }
+}

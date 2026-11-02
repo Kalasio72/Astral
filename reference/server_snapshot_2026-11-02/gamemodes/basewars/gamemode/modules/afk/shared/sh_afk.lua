@@ -1,0 +1,3 @@
+MODULE.Name = "AFK"
+MODULE.Author = "Q2F2 & Ghosty"
+MODULE.CLEAR_COOLDOWN = 1

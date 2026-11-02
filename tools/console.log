@@ -1,0 +1,9 @@
+﻿### STATUS: running
+lua_openscript astral_tools/test_upgrade.lua
+Running script astral_tools/test_upgrade.lua...
+AmeliorationTest<BOT> changed their name to (1)AmeliorationTest
+[Astral Test] OK    imprimante au niveau 1 (coût de base 1000)
+[Astral Test] OK    +1 niveau : niveau 2, argent débité de 1000
+[Astral Test] OK    +5 niveaux avec un budget limité : s'arrête au niveau 3, reste 1
+[Astral Test] OK    quantité invalide (7) refusée
+Dropped (1)AmeliorationTest (0) from server (Fin du test amélioration)

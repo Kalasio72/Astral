@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Astral Panel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script>window.ASTRAL_TOKEN = "__ASTRAL_TOKEN__";</script>
+</head>
+<body>
+<div class="stars"></div>
+<aside class="sidebar">
+	<div class="brand">
+		<div class="logo"><span></span></div>
+		<div><strong>ASTRAL</strong><small>Panel BaseWars</small></div>
+	</div>
+	<nav id="nav">
+		<a data-page="dashboard" class="active"><i>◉</i>Tableau de bord</a>
+		<a data-page="console"><i>⌘</i>Console</a>
+		<a data-page="players"><i>☺</i>Joueurs</a>
+		<a data-page="economy"><i>€</i>Économie</a>
+		<a data-page="community"><i>★</i>Communauté</a>
+		<a data-page="market"><i>⇄</i>Marché</a>
+		<a data-page="security"><i>⛨</i>Sécurité</a>
+		<a data-page="logs"><i>☰</i>Journaux</a>
+		<a data-page="files"><i>▤</i>Fichiers</a>
+		<a data-page="config"><i>⚙</i>Configuration</a>
+		<a data-page="backups"><i>⛁</i>Sauvegardes</a>
+	</nav>
+	<div class="server-pill" id="pill"><span class="dot"></span><span id="pill-text">…</span></div>
+</aside>
+
+<main>
+	<header class="topbar">
+		<div>
+			<h1 id="page-title">Tableau de bord</h1>
+			<p id="page-sub" class="muted">Astral BaseWars | FR</p>
+		</div>
+		<div class="power">
+			<button class="btn good" data-power="start">Démarrer</button>
+			<button class="btn" data-power="restart">Redémarrer</button>
+			<button class="btn warn" data-power="stop">Arrêter</button>
+			<button class="btn bad" data-power="kill" title="Arrêt forcé">Forcer</button>
+		</div>
+	</header>
+
+	<section id="page-dashboard" class="page active">
+		<div class="grid kpis">
+			<div class="card kpi"><span class="label">État</span><strong id="k-state">—</strong><small id="k-uptime" class="muted"></small></div>
+			<div class="card kpi"><span class="label">Joueurs</span><strong id="k-players">—</strong><small id="k-map" class="muted"></small></div>
+			<div class="card kpi"><span class="label">Processeur</span><strong id="k-cpu">—</strong><canvas id="c-cpu" height="40"></canvas></div>
+			<div class="card kpi"><span class="label">Mémoire</span><strong id="k-ram">—</strong><canvas id="c-ram" height="40"></canvas></div>
+		</div>
+		<div class="grid two">
+			<div class="card">
+				<div class="card-head"><h2>Console récente</h2><a class="link" data-goto="console">Ouvrir →</a></div>
+				<pre class="console mini" id="mini-console"></pre>
+			</div>
+			<div class="card">
+				<div class="card-head"><h2>Serveur</h2></div>
+				<dl class="facts" id="facts"></dl>
+			</div>
+		</div>
+	</section>
+
+	<section id="page-console" class="page">
+		<div class="card fill">
+			<div class="card-head"><h2>Console en direct</h2><span class="badge" id="console-state">…</span></div>
+			<pre class="console" id="console"></pre>
+			<form id="cmd-form" class="cmd">
+				<span class="prompt">›</span>
+				<input id="cmd" autocomplete="off" placeholder="Commande serveur (ex. ulx adduserid …, lua_openscript …, astral_diag)">
+				<button class="btn primary">Envoyer</button>
+			</form>
+			<div class="chips">
+				<button class="chip" data-cmd="astral_diag">astral_diag</button>
+				<button class="chip" data-cmd="status">status</button>
+				<button class="chip" data-cmd="lua_openscript astral_tools/check_shop.lua">Vérifier la boutique</button>
+				<button class="chip" data-cmd="lua_openscript astral_tools/backup_db.lua">Export base</button>
+			</div>
+		</div>
+	</section>
+
+	<section id="page-players" class="page">
+		<div class="card">
+			<div class="card-head"><h2>Joueurs connectés</h2><button class="btn small" id="refresh-players">Actualiser</button></div>
+			<table class="table" id="players-table"><thead><tr><th>Nom</th><th>Score</th><th>Temps connecté</th><th></th></tr></thead><tbody></tbody></table>
+			<p class="muted small">Actions rapides via ULX : elles s'exécutent dans la console serveur.</p>
+		</div>
+		<div class="card" id="player-card" hidden></div>
+	</section>
+
+	<section id="page-economy" class="page">
+		<div class="grid kpis">
+			<div class="card kpi"><span class="label">Comptes enregistrés</span><strong id="e-accounts">—</strong></div>
+			<div class="card kpi"><span class="label">Argent créé (24 h)</span><strong id="e-created" class="good">—</strong></div>
+			<div class="card kpi"><span class="label">Argent dépensé (24 h)</span><strong id="e-destroyed" class="bad">—</strong></div>
+			<div class="card kpi"><span class="label">Alertes</span><strong id="e-alerts">—</strong></div>
+		</div>
+		<div class="grid two">
+			<div class="card"><div class="card-head"><h2>Sources d'argent (24 h)</h2></div><div id="e-sources" class="bars"></div></div>
+			<div class="card"><div class="card-head"><h2>Plus riches</h2></div><table class="table" id="e-richest"><tbody></tbody></table></div>
+		</div>
+		<div class="grid two">
+			<div class="card"><div class="card-head"><h2>Alertes économiques</h2></div><div id="e-alert-list" class="list"></div></div>
+			<div class="card"><div class="card-head"><h2>Activité (24 h)</h2></div><div id="e-activity" class="bars"></div></div>
+		</div>
+	</section>
+
+	<section id="page-community" class="page">
+		<div class="grid kpis">
+			<div class="card kpi"><span class="label">Profils joueurs</span><strong id="c-profiles">—</strong><small id="c-week" class="muted"></small></div>
+			<div class="card kpi"><span class="label">Factions actives</span><strong id="c-factions">—</strong></div>
+			<div class="card kpi"><span class="label">Technologies débloquées</span><strong id="c-research">—</strong></div>
+			<div class="card kpi"><span class="label">Quêtes réclamées</span><strong id="c-quests">—</strong></div>
+		</div>
+		<div class="grid two">
+			<div class="card">
+				<div class="card-head"><h2>Classements</h2><div class="seg" id="c-board-tabs"></div></div>
+				<table class="table" id="c-board"><tbody></tbody></table>
+			</div>
+			<div class="card">
+				<div class="card-head"><h2>Factions</h2><span class="muted small">Persistées en base</span></div>
+				<table class="table" id="c-faction-table"><thead><tr><th>Faction</th><th>Chef</th><th>Membres</th><th>Créée</th></tr></thead><tbody></tbody></table>
+			</div>
+		</div>
+		<div class="grid two">
+			<div class="card"><div class="card-head"><h2>Recherche</h2><span class="muted small">Joueurs par technologie</span></div><div id="c-research-bars" class="bars"></div></div>
+			<div class="card"><div class="card-head"><h2>Quêtes</h2><span class="muted small">Réclamées / commencées</span></div><div id="c-quest-bars" class="bars"></div></div>
+		</div>
+	</section>
+
+	<section id="page-market" class="page">
+		<div class="grid kpis">
+			<div class="card kpi"><span class="label">Offres ouvertes</span><strong id="m-open">—</strong><small id="m-stock" class="muted"></small></div>
+			<div class="card kpi"><span class="label">Ventes (7 j)</span><strong id="m-count">—</strong></div>
+			<div class="card kpi"><span class="label">Volume échangé (7 j)</span><strong id="m-volume" class="good">—</strong></div>
+			<div class="card kpi"><span class="label">Taxe détruite (7 j)</span><strong id="m-tax" class="bad">—</strong><small id="m-rate" class="muted"></small></div>
+		</div>
+		<div class="grid two">
+			<div class="card">
+				<div class="card-head"><h2>Offres ouvertes</h2><button class="btn small" id="m-refresh">Actualiser</button></div>
+				<div class="scroll" style="max-height:460px"><table class="table" id="m-open-table"><thead><tr><th>Ressource</th><th>Vendeur</th><th>Reste</th><th>Prix /u</th></tr></thead><tbody></tbody></table></div>
+			</div>
+			<div class="card">
+				<div class="card-head"><h2>Dernières ventes</h2><span class="muted small">100 dernières</span></div>
+				<div class="scroll" style="max-height:460px"><table class="table" id="m-sales-table"><thead><tr><th>Date</th><th>Acheteur</th><th>Vendeur</th><th>Achat</th><th>Total</th></tr></thead><tbody></tbody></table></div>
+			</div>
+		</div>
+	</section>
+
+	<section id="page-security" class="page">
+		<div class="grid kpis">
+			<div class="card kpi"><span class="label">Astral Shield</span><strong id="s-shield">—</strong><small id="s-shield-sub" class="muted"></small></div>
+			<div class="card kpi"><span class="label">Failles critiques</span><strong id="s-crit">—</strong><small id="s-other" class="muted"></small></div>
+			<div class="card kpi"><span class="label">Tentatives bloquées</span><strong id="s-blocks">—</strong><small id="s-blocks-sub" class="muted"></small></div>
+			<div class="card kpi"><span class="label">Dernière analyse</span><strong id="s-last" style="font-size:18px">—</strong><small id="s-last-sub" class="muted"></small></div>
+		</div>
+		<div class="card">
+			<div class="card-head">
+				<h2>Failles trouvées dans les fichiers</h2>
+				<div class="filters">
+					<div class="seg" id="s-filter"></div>
+					<button class="btn primary small" id="s-scan">Lancer une analyse</button>
+				</div>
+			</div>
+			<div id="s-addons" class="sec-addons"></div>
+			<div class="scroll" style="max-height:520px"><table class="table" id="s-findings"><thead><tr><th>Gravité</th><th>Faille</th><th>Addon</th><th>Chemin d'accès</th><th></th></tr></thead><tbody></tbody></table></div>
+			<p class="muted small" id="s-ignored"></p>
+		</div>
+		<div class="card">
+			<div class="card-head"><h2>Lignes supprimées</h2><span class="muted small">Copie d'origine gardée dans data/astral/failles_sauvegardes/ — redémarre le serveur pour appliquer</span></div>
+			<div class="scroll" style="max-height:320px"><table class="table" id="s-fixes"><thead><tr><th>Date</th><th>Fichier</th><th>Ligne retirée</th><th>Syntaxe</th><th></th></tr></thead><tbody></tbody></table></div>
+		</div>
+		<div class="card">
+			<div class="card-head"><h2>Tentatives bloquées en direct</h2><span class="muted small">Astral Shield — 200 dernières</span></div>
+			<div class="scroll" style="max-height:420px"><table class="table" id="s-blocks-table"><thead><tr><th>Date</th><th>Attaque</th><th>Addon</th><th>Fichier</th><th>Détail</th></tr></thead><tbody></tbody></table></div>
+		</div>
+		<div class="card">
+			<div class="card-head"><h2>Ce que surveille le bouclier</h2></div>
+			<ul class="sec-help">
+				<li><strong>Adresses de portes dérobées connues</strong> : <span id="s-hosts" class="muted"></span> — aucune requête ne part.</li>
+				<li><strong>Code téléchargé puis exécuté</strong> (RunString / CompileString pendant une réponse HTTP) : bloqué, quelle que soit l'adresse.</li>
+				<li><strong>Fausses textures</strong> (.vtf contenant un chargeur de code) : refusées à la compilation.</li>
+				<li><strong>Commandes sensibles depuis Internet</strong> (rcon_password, sv_password, ulx, lua_run, sv_cheats) : bloquées.</li>
+				<li><strong>Promotion admin / superadmin hors ULX</strong> : bloquée.</li>
+			</ul>
+			<p class="muted small">L'analyse des fichiers parcourt addons/, lua/, gamemodes/ et les addons Workshop montés. Elle se lance seule 30 s après chaque démarrage. Une faille « critique » signifie : retire l'addon et reprends-le depuis la source officielle de son auteur. Elle ne détecte pas tout : un addon peut tricher sans aucune de ces signatures.</p>
+		</div>
+	</section>
+
+	<section id="page-logs" class="page">
+		<div class="card fill">
+			<div class="card-head">
+				<h2>Journaux Astral</h2>
+				<div class="filters">
+					<select id="log-cat"><option value="">Toutes catégories</option></select>
+					<input id="log-q" placeholder="Rechercher (texte ou SteamID64)">
+					<button class="btn small" id="log-go">Filtrer</button>
+				</div>
+			</div>
+			<div class="scroll"><table class="table" id="logs-table"><thead><tr><th>Date</th><th>Catégorie</th><th>Joueur</th><th>Détails</th></tr></thead><tbody></tbody></table></div>
+		</div>
+	</section>
+
+	<section id="page-files" class="page">
+		<div class="grid files">
+			<div class="card">
+				<div class="card-head"><h2>Fichiers</h2><span class="muted small" id="cwd">/</span></div>
+				<div id="file-list" class="list files-list"></div>
+			</div>
+			<div class="card fill">
+				<div class="card-head"><h2 id="editor-title">Éditeur</h2><button class="btn primary small" id="save-file" disabled>Enregistrer</button></div>
+				<textarea id="editor" spellcheck="false" placeholder="Ouvre un fichier texte à gauche (cfg, lua, txt…)."></textarea>
+			</div>
+		</div>
+	</section>
+
+	<section id="page-config" class="page">
+		<div class="card">
+			<div class="card-head"><h2>Paramètres de démarrage</h2><span class="muted small">Pris en compte au prochain redémarrage</span></div>
+			<div id="startup" class="form"></div>
+		</div>
+	</section>
+
+	<section id="page-backups" class="page">
+		<div class="card">
+			<div class="card-head"><h2>Sauvegardes</h2><button class="btn primary" id="do-backup">Sauvegarder maintenant</button></div>
+			<p class="muted small">Export JSON de la base + archive du gamemode, des addons, de la config et des données, téléchargée sur ce PC (dossier backups/).</p>
+			<pre class="console mini" id="backup-out" hidden></pre>
+			<table class="table" id="backups-table"><tbody></tbody></table>
+		</div>
+	</section>
+</main>
+
+<div id="toasts"></div>
+<script src="app.js"></script>
+</body>
+</html>
